@@ -4,6 +4,12 @@
 # Direct port of the Arduino NeoPixel library strandtest example.  Showcases
 # various animations on a strip of NeoPixels.
 import time
+import sys
+import math
+import random
+import time
+
+
 
 from neopixel import *
 
@@ -78,6 +84,99 @@ def theaterChaseRainbow(strip, wait_ms=50):
 			for i in range(0, strip.numPixels(), 3):
 				strip.setPixelColor(i+q, 0)
 
+def studyLighting(strip, color):
+	for i in range(strip.numPixels()):
+		strip.setPixelColor(i, color)
+		# strip.show()
+		# time.sleep(50/1000.0)
+	strip.show()
+	# for i in range(strip.numPixels()):
+	# 	strip.setPixelColor(i, )
+
+def firelord(strip):
+	levels = [1,24,87,166,229,254,229,166,87,24]
+	wait_ms = 140
+
+	# t0 = time.time()
+	for j in range(10000):
+		for i in range(0, strip.numPixels()):
+			index = i % len(levels)
+
+			# index = ((i + j) % strip.numPixels()) % len(levels)
+			# strip.setPixelColor(i, Color(levels[index] / 4, levels[index] / 2, levels[index]))
+
+			# index = random.randint(max(0, (i % len(levels)) - 1), min(len(levels) - 1, (i % len(levels)) + 1)) % len(levels)
+			# strip.setPixelColor(i, Color(levels[index], levels[index] / 2, levels[index] / 4))
+
+			intensity = random.randint(max(0, levels[index] - (levels[index] / 4)), min(255, levels[index] + (levels[index] / 4)))
+			strip.setPixelColor(i, Color(intensity, intensity / 3, intensity / 4))
+		strip.show()
+		time.sleep(wait_ms/1000.0)
+	# t1 = time.time()
+	# total = t1-t0
+	# print "it took " + str(total)
+
+def fade_in_out_step(strip, px, start, end):
+	target = random.randint(start, end)
+	curr = start
+	while True:
+		if curr != target:
+			if curr < target:
+				curr += 1
+				strip.setPixelColor(px, Color(curr, curr / 4, 0))
+				yield
+			else:
+				curr -= 1
+				strip.setPixelColor(px, Color(curr, curr / 4, 0))
+				yield
+		else:
+			target = random.randint(start, end)
+
+	# while True:
+	# 	for i in range(start, end + 1):
+	# 		strip.setPixelColor(px, Color(i, i / 4, 0))
+	# 		yield
+	# 	for i in range(end, start - 1, -1):
+	# 		strip.setPixelColor(px, Color(i, i / 4, 0))
+	# 		yield
+
+def test(strip):
+	lights = [fade_in_out_step(strip, t[0], t[1], t[2]) for t in [
+        (47, 0, 255),
+        (48, 0, 255),
+        (49, 0, 255),
+        (50, 0, 255),
+        (51, 0, 255),
+        (52, 0, 255),
+        (53, 0, 255),
+        (54, 0, 255),
+        (55, 0, 255),
+        (56, 0, 255),
+        (57, 0, 255),
+        (58, 0, 255)]]
+		# (51, 50, 150),
+		# (52, 100, 200),
+		# (53, 150, 250),
+		# (54, 200, 255),
+		# (55, 150, 250),
+		# (56, 100, 200),
+		# (57, 50, 150)]]
+	while True:
+		for l in lights:
+			next(l)
+		strip.show()
+		time.sleep(0.005)
+
+	# strip.setPixelColor(50, Color(8, 2, 0))
+	# strip.setPixelColor(52, Color(16, 4, 0))
+	# strip.setPixelColor(51, Color(32, 8, 0))
+	# strip.setPixelColor(52, Color(64, 16, 0))
+	# strip.setPixelColor(52, Color(128, 32, 0))
+	# strip.setPixelColor(53, Color(255, 64, 0))
+	# strip.setPixelColor(56, Color(50, 2, 0))
+	# strip.setPixelColor(57, Color(50, 2, 0))
+	# strip.setPixelColor(58, Color(50, 2, 0))
+	strip.show()
 
 # Main program logic follows:
 if __name__ == '__main__':
@@ -86,17 +185,30 @@ if __name__ == '__main__':
 	# Intialize the library (must be called once before other functions).
 	strip.begin()
 
-	print ('Press Ctrl-C to quit.')
-	while True:
-		print ('Color wipe animations.')
-		colorWipe(strip, Color(255, 0, 0))  # Red wipe
-		colorWipe(strip, Color(0, 255, 0))  # Blue wipe
-		colorWipe(strip, Color(0, 0, 255))  # Green wipe
-		print ('Theater chase animations.')
-		theaterChase(strip, Color(127, 127, 127))  # White theater chase
-		theaterChase(strip, Color(127,   0,   0))  # Red theater chase
-		theaterChase(strip, Color(  0,   0, 127))  # Blue theater chase
-		print ('Rainbow animations.')
-		rainbow(strip)
-		rainbowCycle(strip)
-		theaterChaseRainbow(strip)
+	# print ('Press Ctrl-C to quit.')
+
+	if (len(sys.argv) > 1):
+		# print sys.argv
+		# print c
+		c = Color(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]))
+		studyLighting(strip, c)
+	else:		
+		# for i in range(0, 10, 1):
+		# 	print (127 * math.sin(2 * math.pi * (i / 10.0) - (math.pi / 2)) + 127)
+		# firelord(strip)
+		print str(strip.numPixels()) + " pixels"
+		test(strip)
+
+	# while True:
+		# print ('Color wipe animations.')
+		# colorWipe(strip, Color(255, 0, 0))  # Red wipe
+		# colorWipe(strip, Color(0, 255, 0))  # Blue wipe
+		# colorWipe(strip, Color(0, 0, 255))  # Green wipe
+		# print ('Theater chase animations.')
+		# theaterChase(strip, Color(127, 127, 127))  # White theater chase
+		# theaterChase(strip, Color(127,   0,   0))  # Red theater chase
+		# theaterChase(strip, Color(  0,   0, 127))  # Blue theater chase
+		# print ('Rainbow animations.')
+		# rainbow(strip)
+		# rainbowCycle(strip)
+		# theaterChaseRainbow(strip)
