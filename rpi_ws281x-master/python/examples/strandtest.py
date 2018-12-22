@@ -123,59 +123,22 @@ def fade_in_out_step(strip, px, start, end):
 		if curr != target:
 			if curr < target:
 				curr += 1
-				strip.setPixelColor(px, Color(curr, curr / 4, 0))
-				yield
 			else:
 				curr -= 1
-				strip.setPixelColor(px, Color(curr, curr / 4, 0))
-				yield
+			strip.setPixelColor(px, Color(curr, curr / 4, 0))
+			yield
 		else:
 			target = random.randint(start, end)
 
-	# while True:
-	# 	for i in range(start, end + 1):
-	# 		strip.setPixelColor(px, Color(i, i / 4, 0))
-	# 		yield
-	# 	for i in range(end, start - 1, -1):
-	# 		strip.setPixelColor(px, Color(i, i / 4, 0))
-	# 		yield
-
-def test(strip):
-	lights = [fade_in_out_step(strip, t[0], t[1], t[2]) for t in [
-        (47, 0, 255),
-        (48, 0, 255),
-        (49, 0, 255),
-        (50, 0, 255),
-        (51, 0, 255),
-        (52, 0, 255),
-        (53, 0, 255),
-        (54, 0, 255),
-        (55, 0, 255),
-        (56, 0, 255),
-        (57, 0, 255),
-        (58, 0, 255)]]
-		# (51, 50, 150),
-		# (52, 100, 200),
-		# (53, 150, 250),
-		# (54, 200, 255),
-		# (55, 150, 250),
-		# (56, 100, 200),
-		# (57, 50, 150)]]
+def fire(strip):
+	lights = [fade_in_out_step(strip, t[0], t[1], t[2])
+		for t in
+		[(i, 0, 255) for i in range(47, 59)]]
 	while True:
 		for l in lights:
 			next(l)
 		strip.show()
 		time.sleep(0.005)
-
-	# strip.setPixelColor(50, Color(8, 2, 0))
-	# strip.setPixelColor(52, Color(16, 4, 0))
-	# strip.setPixelColor(51, Color(32, 8, 0))
-	# strip.setPixelColor(52, Color(64, 16, 0))
-	# strip.setPixelColor(52, Color(128, 32, 0))
-	# strip.setPixelColor(53, Color(255, 64, 0))
-	# strip.setPixelColor(56, Color(50, 2, 0))
-	# strip.setPixelColor(57, Color(50, 2, 0))
-	# strip.setPixelColor(58, Color(50, 2, 0))
 	strip.show()
 
 # Main program logic follows:
@@ -197,7 +160,7 @@ if __name__ == '__main__':
 		# 	print (127 * math.sin(2 * math.pi * (i / 10.0) - (math.pi / 2)) + 127)
 		# firelord(strip)
 		print str(strip.numPixels()) + " pixels"
-		test(strip)
+		fire(strip)
 
 	# while True:
 		# print ('Color wipe animations.')
